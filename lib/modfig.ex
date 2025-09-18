@@ -1,32 +1,33 @@
 defmodule Modfig do
-  defmacro __using__(_opts) do
+  defmacro __using__(opts) do
+    app =
+      Keyword.get_lazy(opts, :app, fn ->
+        Application.fetch_env!(:modfig, :app)
+      end)
+
     quote do
-      require Playback3.Config
-      alias Playback3.Config
+      require Modfig
 
       def config do
-        actual = Application.get_env(:playback3, __MODULE__, [])
+        actual = Application.get_env(unquote(app), __MODULE__, [])
 
-        if Application.fetch_env!(:playback3, :env) do
-          temp = Application.get_env(:playback3_temp, __MODULE__, [])
+        temp = Application.get_env(:"#{unquote(app)}_temp", __MODULE__, [])
 
-          Keyword.merge(actual, temp)
-        else
-          actual
-        end
+        Keyword.merge(actual, temp)
       end
     end
   end
 
   defmacro fetch!(key) do
     quote do
-      Playback3.Config.fetch!(__MODULE__, unquote(key))
+      Modfig.fetch!(__MODULE__, unquote(key))
     end
   end
 
   def fetch!(mod, key) do
     mod.config()
     |> Keyword.fetch(key)
+    |> dbg()
     |> case do
       {:ok, value} ->
         value

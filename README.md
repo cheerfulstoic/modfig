@@ -8,7 +8,7 @@ Example:
 
 ```elixir
 def MyApp.Accounts do
-  use Playback3.Config
+  use Modfig
 
   def fetch_user(id) do
     if Modfig.fetch!(:allow_user_fetching?) do
@@ -20,6 +20,12 @@ def MyApp.Accounts do
 TODO: Test example
 
 ## Installation
+
+In your `config/runtime.exs`:
+
+```elixir
+
+```
 
 If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 by adding `modfig` to your list of dependencies in `mix.exs`:
